@@ -1,5 +1,7 @@
-﻿using Unity.MLAgents.Policies;
+﻿using Unity.MLAgents;
+using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
+using Unity.MLAgents.Actuators;
 using UnityEngine;
 using static CarController;
 
@@ -63,9 +65,9 @@ public class CarAgent : BaseAgent
         sensor.AddObservation(carControllerRigidBody.velocity);
     }
     
-    public override void OnActionReceived(float[] vectorAction)
+    public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        var direction = Mathf.FloorToInt(vectorAction[0]);
+        var direction = actionBuffers.DiscreteActions[0];
 
         switch (direction)
         {
@@ -110,28 +112,30 @@ public class CarAgent : BaseAgent
         EndEpisode();
     }
 
-    public override void Heuristic(float[] actionsOut)
+    public override void Heuristic(in ActionBuffers actionsOut)
     {
-        actionsOut[0] = 0;
+        var discreteActionsOut = actionsOut.DiscreteActions;
+
+        discreteActionsOut[0] = 0;
 
         if(Input.GetKey(KeyCode.UpArrow))
         {
-            actionsOut[0] = 1;
+            discreteActionsOut[0] = 1;
         }
 
         if(Input.GetKey(KeyCode.DownArrow))
         {
-            actionsOut[0] = 2;
+            discreteActionsOut[0] = 2;
         }
 
         if(Input.GetKey(KeyCode.LeftArrow) && carController.canApplyTorque())
         {
-            actionsOut[0] = 3;
+            discreteActionsOut[0] = 3;
         }
 
         if(Input.GetKey(KeyCode.RightArrow) && carController.canApplyTorque())
         {
-            actionsOut[0] = 4;
+            discreteActionsOut[0] = 4;
         }
     }
 }

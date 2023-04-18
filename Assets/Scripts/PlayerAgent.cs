@@ -1,4 +1,6 @@
-﻿using Unity.MLAgents.Sensors;
+﻿using Unity.MLAgents;
+using Unity.MLAgents.Sensors;
+using Unity.MLAgents.Actuators;
 using UnityEngine;
 
 
@@ -57,12 +59,12 @@ public class PlayerAgent : BaseAgent
         sensor.AddObservation(playerRigidbody.velocity.z);
     }
 
-    public override void OnActionReceived(float[] vectorAction)
+    public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         var vectorForce = new Vector3();
 
-        vectorForce.x = vectorAction[0];
-        vectorForce.z = vectorAction[1];
+        vectorForce.x = actionBuffers.ContinuousActions[0];
+        vectorForce.z = actionBuffers.ContinuousActions[1];
 
         playerRigidbody.AddForce(vectorForce * speed);
 
@@ -88,9 +90,10 @@ public class PlayerAgent : BaseAgent
         }
     }
 
-    public override void Heuristic(float[] actionsOut)
+    public override void Heuristic(in ActionBuffers actionsOut)
     {
-        actionsOut[0] = Input.GetAxis("Horizontal"); // x
-        actionsOut[1] = Input.GetAxis("Vertical"); // z
+        var continuousActionsOut = actionsOut.ContinuousActions;
+        continuousActionsOut[0] = Input.GetAxis("Horizontal"); // x
+        continuousActionsOut[1] = Input.GetAxis("Vertical"); // z
     }
 }

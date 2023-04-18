@@ -1,5 +1,7 @@
 ﻿using TMPro;
+using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
+using Unity.MLAgents.Actuators;
 using UnityEngine;
 
 public class CrossTheRoadAgent : BaseAgent
@@ -81,12 +83,12 @@ public class CrossTheRoadAgent : BaseAgent
         }
     }
 
-    public override void OnActionReceived(float[] vectorAction)
+    public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         if (moveInProgress)
             return;
 
-        direction = Mathf.FloorToInt(vectorAction[0]);
+        direction = actionBuffers.DiscreteActions[0];
 
         switch (direction)
         {
@@ -142,27 +144,29 @@ public class CrossTheRoadAgent : BaseAgent
         stepValue.text = $"{overallSteps}";
     }
 
-    public override void Heuristic(float[] actionsOut)
+    public override void Heuristic(in ActionBuffers actionsOut)
     {
+        var discreteActionsOut = actionsOut.DiscreteActions;
+
         //idle
-        actionsOut[0] = 0;
+        discreteActionsOut[0] = 0;
 
         //move left
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            actionsOut[0] = 1;
+            discreteActionsOut[0] = 1;
         }
 
         //move right
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            actionsOut[0] = 2;
+            discreteActionsOut[0] = 2;
         }
 
         //move forward
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            actionsOut[0] = 3;
+            discreteActionsOut[0] = 3;
         }
     }
 }

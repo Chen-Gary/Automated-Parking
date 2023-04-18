@@ -1,5 +1,7 @@
 ﻿using TMPro;
+using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
+using Unity.MLAgents.Actuators;
 using UnityEngine;
 
 public class AgentAvoidance : BaseAgent
@@ -57,10 +59,10 @@ public class AgentAvoidance : BaseAgent
         sensor.AddObservation(targetMoving.transform.localPosition);
     }
 
-    public override void OnActionReceived(float[] vectorAction)
+    public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         prevPosition = moveTo;
-        int direction = Mathf.FloorToInt(vectorAction[0]);
+        int direction = actionBuffers.DiscreteActions[0];
         moveTo = idlePosition;
 
         switch (direction)
@@ -122,24 +124,25 @@ public class AgentAvoidance : BaseAgent
         StartCoroutine(SwapGroundMaterial(successMaterial, 0.5f));
     }
 
-    public override void Heuristic(float[] actionsOut)
+    public override void Heuristic(in ActionBuffers actionsOut)
     {
+        var discreteActionsOut = actionsOut.DiscreteActions;
         //idle
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            actionsOut[0] = 0;
+            discreteActionsOut[0] = 0;
         }
 
         //move left
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            actionsOut[0] = 1;
+            discreteActionsOut[0] = 1;
         }
 
         //move right
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            actionsOut[0] = 2;
+            discreteActionsOut[0] = 2;
         }
     }
 }
