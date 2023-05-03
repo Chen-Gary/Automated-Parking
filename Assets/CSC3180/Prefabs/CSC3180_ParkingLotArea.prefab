@@ -2116,7 +2116,7 @@ MonoBehaviour:
   verticalInput: 0
   isBreaking: 0
   motorForce: 20000
-  breakForce: 30
+  breakForce: 200000
   maxSteerAngle: 30
   frontLeftWheelCollider: {fileID: 675439841196995687}
   frontRightWheelCollider: {fileID: 7954423496493786752}

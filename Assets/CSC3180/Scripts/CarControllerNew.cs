@@ -53,6 +53,13 @@ public class CarControllerNew : MonoBehaviour {
         ApplyBreaking();
     }
 
+    public void StopInstantly() {
+        frontRightWheelCollider.brakeTorque = Mathf.Infinity;
+        frontLeftWheelCollider.brakeTorque = Mathf.Infinity;
+        rearLeftWheelCollider.brakeTorque = Mathf.Infinity;
+        rearRightWheelCollider.brakeTorque = Mathf.Infinity;
+    }
+
     private void ApplyBreaking() {
         frontRightWheelCollider.brakeTorque = currentbreakForce;
         frontLeftWheelCollider.brakeTorque = currentbreakForce;
