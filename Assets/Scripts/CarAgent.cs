@@ -11,7 +11,7 @@ public class CarAgent : BaseAgent
 
     private BehaviorParameters behaviorParameters;
 
-    private CarController carController;
+    private CarControllerNew carController;
 
     private Rigidbody carControllerRigidBody;
 
@@ -21,7 +21,7 @@ public class CarAgent : BaseAgent
     {
         originalPosition = transform.localPosition;
         behaviorParameters = GetComponent<BehaviorParameters>();
-        carController = GetComponent<CarController>();
+        carController = GetComponent<CarControllerNew>();
         carControllerRigidBody = carController.GetComponent<Rigidbody>();
         carSpots = transform.parent.GetComponentInChildren<CarSpots>();
 
@@ -36,7 +36,7 @@ public class CarAgent : BaseAgent
     private void ResetParkingLotArea()
     {
         // important to set car to automonous during default behavior
-        carController.IsAutonomous = behaviorParameters.BehaviorType == BehaviorType.Default;
+        //carController.IsAutonomous = behaviorParameters.BehaviorType == BehaviorType.Default;
         transform.localPosition = originalPosition;
         transform.localRotation = Quaternion.identity;
         carControllerRigidBody.velocity = Vector3.zero;
@@ -67,26 +67,11 @@ public class CarAgent : BaseAgent
     
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        var direction = actionBuffers.DiscreteActions[0];
 
-        switch (direction)
-        {
-            case 0: // idle
-                carController.CurrentDirection = Direction.Idle;
-                break;
-            case 1: // forward
-                carController.CurrentDirection = Direction.MoveForward;
-                break;
-            case 2: // backward
-                carController.CurrentDirection = Direction.MoveBackward;
-                break;
-            case 3: // turn left
-                carController.CurrentDirection = Direction.TurnLeft;
-                break;
-            case 4: // turn right
-                carController.CurrentDirection = Direction.TurnRight;
-                break;
-        }
+        carController.SetInput(
+            actionBuffers.ContinuousActions[0],
+            actionBuffers.ContinuousActions[1],
+            actionBuffers.DiscreteActions[0]);
 
         AddReward(-1f / MaxStep);
     }
@@ -115,27 +100,10 @@ public class CarAgent : BaseAgent
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var discreteActionsOut = actionsOut.DiscreteActions;
+        var continuousActionsOut = actionsOut.ContinuousActions;
 
-        discreteActionsOut[0] = 0;
-
-        if(Input.GetKey(KeyCode.UpArrow))
-        {
-            discreteActionsOut[0] = 1;
-        }
-
-        if(Input.GetKey(KeyCode.DownArrow))
-        {
-            discreteActionsOut[0] = 2;
-        }
-
-        if(Input.GetKey(KeyCode.LeftArrow) && carController.canApplyTorque())
-        {
-            discreteActionsOut[0] = 3;
-        }
-
-        if(Input.GetKey(KeyCode.RightArrow) && carController.canApplyTorque())
-        {
-            discreteActionsOut[0] = 4;
-        }
+        continuousActionsOut[0] = Input.GetAxis("Horizontal");
+        continuousActionsOut[1] = Input.GetAxis("Vertical");
+        discreteActionsOut[0] = Input.GetKey(KeyCode.Space) ? 1 : 0;
     }
 }
