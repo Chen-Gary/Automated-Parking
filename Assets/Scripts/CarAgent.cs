@@ -22,7 +22,7 @@ public class CarAgent : BaseAgent
         originalPosition = transform.localPosition;
         behaviorParameters = GetComponent<BehaviorParameters>();
         carController = GetComponent<CarControllerNew>();
-        carControllerRigidBody = carController.GetComponent<Rigidbody>();
+        carControllerRigidBody = GetComponent<Rigidbody>();
         carSpots = transform.parent.GetComponentInChildren<CarSpots>();
 
         ResetParkingLotArea();    
