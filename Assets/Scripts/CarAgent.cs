@@ -36,6 +36,7 @@ public class CarAgent : BaseAgent
     private void ResetParkingLotArea()
     {
         // important to set car to automonous during default behavior
+        carController.SetInput(0, 0, 0);
         //carController.IsAutonomous = behaviorParameters.BehaviorType == BehaviorType.Default;
         transform.localPosition = originalPosition;
         transform.localRotation = Quaternion.identity;
